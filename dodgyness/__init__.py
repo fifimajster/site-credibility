@@ -5,8 +5,9 @@ import numpy as np
 import pickle
 import matplotlib.pyplot as plt
 import csv
-
 from nltk.sentiment import SentimentIntensityAnalyzer
+import os
+
 
 
 def getArticleUrls(site):
@@ -159,6 +160,8 @@ def printClosestMatch(words, sitesInfo, bigrams=False):
 
 
 def compareArticleToOtherSites(url, sitesInfo, bigrams=False):
+    if sitesInfo == 'DEFAULT':
+        sitesInfo = load()
     article = Article(url)
     w, s, pa = processArticles([article], 1)
     articleInfo = {}
@@ -169,7 +172,9 @@ def compareArticleToOtherSites(url, sitesInfo, bigrams=False):
 
     baseUrl = url.rsplit('/')[2]
     urlClasses = {}
-    with open('sourcesUncut.csv', 'r') as csvfile:
+    path = os.path.dirname(__file__)
+    path = os.path.join(path, 'sourcesUncut.csv')
+    with open(path, 'r') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         for row in reader:
             urlClasses[row[0]] = row[1:]
@@ -200,7 +205,9 @@ def save(sitesInfo):
 
 def load():
     # loads sitesInfo from file
-    with open('sitesInfo.pickle', 'rb') as handle:
+    path = os.path.dirname(__file__)
+    path = os.path.join(path, 'sitesInfo.pickle')
+    with open(path, 'rb') as handle:
         sitesInfo = pickle.load(handle)
     return sitesInfo
 
